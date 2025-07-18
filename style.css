@@ -1,15 +1,15 @@
 /* CSS Variables */
 :root {
-    --primary-bg: #0F1419;
-    --secondary-bg: #1A2332;
-    --text-primary: #F0F4F8;
+    --primary-bg: #0A0E13;
+    --secondary-bg: #1E2832;
+    --text-primary: #F8FAFC;
     --text-secondary: #94A3B8;
-    --accent-color: #2E7D9A;
-    --accent-hover: #245A6B;
-    --border-color: #334155;
-    --success-color: #059669;
-    --warning-color: #D97706;
-    --error-color: #DC2626;
+    --accent-color: #3B82F6;
+    --accent-hover: #2563EB;
+    --border-color: #374151;
+    --success-color: #10B981;
+    --warning-color: #F59E0B;
+    --error-color: #EF4444;
     
     /* Typography */
     --font-heading: 'Syne', sans-serif;
@@ -65,49 +65,97 @@ body {
     font-family: var(--font-body);
     background-color: var(--primary-bg);
     background-image: 
-        radial-gradient(circle at 20% 50%, rgba(46, 125, 154, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(46, 125, 154, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(46, 125, 154, 0.03) 0%, transparent 50%);
+        linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(37, 99, 235, 0.02) 100%),
+        radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
-    cursor: none;
+    cursor: auto;
 }
 
-/* Custom Cursor */
-.cursor {
+/* Animated Background */
+.animated-background {
     position: fixed;
-    width: 8px;
-    height: 8px;
-    background: var(--accent-color);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transition: transform var(--transition-fast);
-    will-change: transform;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
 }
 
-.cursor-follower {
-    position: fixed;
-    width: 30px;
-    height: 30px;
-    background: rgba(46, 125, 154, 0.1);
-    border: 1px solid var(--accent-color);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                width var(--transition-fast), 
-                height var(--transition-fast),
-                background var(--transition-fast);
-    will-change: transform, width, height;
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
-.cursor-follower.hover {
+.shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: float-shapes 20s infinite linear;
+}
+
+.shape:nth-child(1) {
+    left: 10%;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 50%;
+    animation-delay: 0s;
+    animation-duration: 25s;
+}
+
+.shape:nth-child(2) {
+    left: 20%;
     width: 60px;
     height: 60px;
-    background: rgba(46, 125, 154, 0.25);
-    border-color: var(--accent-hover);
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 30%;
+    animation-delay: 5s;
+    animation-duration: 30s;
+}
+
+.shape:nth-child(3) {
+    left: 35%;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 50%;
+    animation-delay: 10s;
+    animation-duration: 35s;
+}
+
+.shape:nth-child(4) {
+    left: 50%;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 40%;
+    animation-delay: 15s;
+    animation-duration: 28s;
+}
+
+.shape:nth-child(5) {
+    left: 70%;
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 50%;
+    animation-delay: 20s;
+    animation-duration: 32s;
+}
+
+.shape:nth-child(6) {
+    left: 85%;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, var(--accent-color), transparent);
+    border-radius: 30%;
+    animation-delay: 25s;
+    animation-duration: 22s;
 }
 
 /* Container */
@@ -130,7 +178,7 @@ body {
 }
 
 .navbar.scrolled {
-    background: rgba(15, 20, 25, 0.95);
+    background: rgba(10, 14, 19, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
 }
@@ -241,7 +289,7 @@ body {
 .gradient-orb {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(46, 125, 154, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
     filter: blur(1px);
     animation: float 8s ease-in-out infinite;
 }
@@ -514,7 +562,7 @@ body {
 
 .project-card:hover {
     transform: translateY(-16px) scale(1.02);
-    box-shadow: 0 30px 80px rgba(46, 125, 154, 0.2);
+    box-shadow: 0 30px 80px rgba(59, 130, 246, 0.2);
     border-color: var(--accent-color);
 }
 
@@ -677,7 +725,7 @@ body {
     background: var(--accent-hover);
     border-color: var(--accent-hover);
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(46, 125, 154, 0.4);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
 }
 
 .btn-primary {
@@ -894,6 +942,24 @@ body {
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+
+@keyframes float-shapes {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+    }
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
     }
 }
 

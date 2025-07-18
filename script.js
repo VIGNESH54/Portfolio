@@ -7,8 +7,7 @@ const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('section');
-const cursor = document.querySelector('.cursor');
-const cursorFollower = document.querySelector('.cursor-follower');
+
 const projectCards = document.querySelectorAll('.project-card');
 const modal = document.getElementById('projectModal');
 const modalClose = document.getElementById('modalClose');
@@ -111,7 +110,7 @@ function smoothScrollTo(target, duration = 800) {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initCustomCursor();
+    initAnimatedBackground();
     initNavigation();
     initScrollAnimations();
     initMagneticButtons();
@@ -122,57 +121,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initAdvancedAnimations();
 });
 
-// Custom Cursor Implementation
-function initCustomCursor() {
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-    let followerX = 0;
-    let followerY = 0;
-
-    // Track mouse movement with throttling
-    let mouseMoveThrottled = false;
-    document.addEventListener('mousemove', (e) => {
-        if (!mouseMoveThrottled) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            mouseMoveThrottled = true;
-            requestAnimationFrame(() => {
-                mouseMoveThrottled = false;
-            });
-        }
-    });
-
-    // Animate cursor with smoother interpolation
-    function animateCursor() {
-        // Cursor position (immediate)
-        cursorX = mouseX;
-        cursorY = mouseY;
-        
-        // Follower position (delayed with smoother easing)
-        followerX += (mouseX - followerX) * 0.15;
-        followerY += (mouseY - followerY) * 0.15;
-        
-        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
-        cursorFollower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
-        
-        requestAnimationFrame(animateCursor);
-    }
+// Animated Background Effects
+function initAnimatedBackground() {
+    const shapes = document.querySelectorAll('.shape');
     
-    animateCursor();
-
-    // Cursor hover effects
-    const hoverElements = document.querySelectorAll('a, button, .project-card, .skill-item, .magnetic-btn');
-    
-    hoverElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            cursorFollower.classList.add('hover');
-        });
-        
-        element.addEventListener('mouseleave', () => {
-            cursorFollower.classList.remove('hover');
-        });
+    // Add random starting positions for shapes
+    shapes.forEach((shape, index) => {
+        const randomDelay = Math.random() * 10;
+        const randomDuration = 20 + Math.random() * 20;
+        shape.style.animationDelay = `${randomDelay}s`;
+        shape.style.animationDuration = `${randomDuration}s`;
     });
 }
 
