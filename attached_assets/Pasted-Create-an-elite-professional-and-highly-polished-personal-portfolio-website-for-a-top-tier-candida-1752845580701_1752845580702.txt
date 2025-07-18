@@ -1,0 +1,86 @@
+Create an elite, professional, and highly polished personal portfolio website for a top-tier candidate in the fields of data science, data analysis, and business intelligence. The goal is to create a memorable and impressive user experience for recruiters and hiring managers. The website must be a single, scrolling page built with HTML, CSS, and JavaScript, adhering to the highest standards of modern web design.
+
+I. Core Design System & Aesthetic:
+
+Theme: A sophisticated and minimalist dark theme. The background should NOT be pure black. Use a deep charcoal or off-black (e.g., #111111) with slightly lighter shades for layered elements (e.g., #1D1D1D).
+
+Typography: Import two specific fonts from Google Fonts.
+
+Headings: Use 'Syne' (Bold, weight 700) for a modern, impactful look.
+
+Body Text: Use 'Inter' (Regular, weight 400) for its supreme readability.
+
+Establish a clear visual hierarchy with font sizes, weights, and letter spacing. All text should be a light grey/off-white (e.g., #E0E0E0) for readability.
+
+Accent Color: Use a single, vibrant accent color for all interactive elements (links, buttons, highlights). A striking electric blue (#00A3FF) is preferred.
+
+Layout: Use a strict grid system with generous whitespace. All content should be contained within a max-width of 1200px and centered on the page for a focused view on larger screens.
+
+II. Advanced UX & Micro-interactions:
+
+Custom Cursor: Implement a custom cursor. It should be a small dot that transforms into a larger, semi-transparent circle when hovering over clickable elements (links, buttons, project cards).
+
+Scroll-Triggered Animations: All sections and elements (like project cards and skill icons) must smoothly fade in and slide up as they enter the viewport. Use the Intersection Observer API in JavaScript for this.
+
+Magnetic Elements: Make key call-to-action buttons (like "Download Resume") and social media icons "magnetic," meaning they subtly pull the cursor towards them when it's nearby.
+
+Smooth Scrolling: Clicking on navbar links must trigger a very smooth scroll effect, not an instant jump.
+
+III. Website Structure & Sections:
+
+1.  Header/Navigation Bar:
+* A fixed header that starts transparent and transitions to a semi-transparent, blurred background (backdrop-filter: blur(10px);) with a subtle bottom border when the user scrolls down.
+* Links: "Home", "About", "Projects", "Contact". The user's name or a small logo on the left.
+
+2.  Home (Hero Section):
+* Headline: Instead of "Hi, I'm...", use a powerful, benefit-oriented headline like Crafting Data-Driven Narratives.
+* Sub-headline: A concise statement: A Data Scientist & Analyst focused on transforming complex data into actionable business intelligence.
+* Value Proposition: Below the sub-headline, list three key strengths with icons, for example: Statistical Modeling, Predictive Analytics, Business Intelligence Dashboards.
+* Background Effect: Implement a very subtle, slow-moving animated gradient or a particle.js-like constellation effect in the background of this section only. It should be non-distracting.
+
+3.  About Section:
+* A two-column layout.
+* Left Column: A professional, high-quality photo. It should not be in a simple circle; instead, let it be a rectangle with a subtle, glowing border effect using the accent color when hovered.
+* Right Column:
+* A heading: Fusing Analytics with Business Acumen.
+* A well-written, narrative-style bio (placeholder): "My journey into data began with a fascination for uncovering hidden patterns. Today, I specialize in developing and deploying machine learning models and creating intuitive dashboards that empower stakeholders. I thrive in environments where I can bridge the gap between raw data and strategic decision-making, ensuring every insight is not just statistically sound, but also commercially valuable."
+* A prominent "Download Resume" button with a sleek icon.
+
+4.  Skills Section:
+* Heading: Technical Toolkit.
+* This section should be visually engaging. Instead of a list, display the skills as a grid of logos/icons that are initially grayscale and light up with their original color on hover.
+* Categorize the skills clearly: Languages & Databases (Python, R, SQL, etc.), ML/DL Frameworks (Scikit-learn, TensorFlow, PyTorch), BI & Visualization (Tableau, Power BI, D3.js), and Cloud & DevOps (AWS, GCP, Docker, Git).
+
+5.  Projects Section (CRITICAL SECTION):
+* Heading: Case Studies.
+* Display 3 placeholder projects in a clean, grid-based layout. Each project card should only show: a high-quality project thumbnail, the project title, and a short one-line description.
+* Modal Pop-up: Clicking a project card must NOT go to a new page. Instead, it must open a large, elegant modal window that dims the background. This modal is the centerpiece of the portfolio and must contain:
+* Project Title and a subtitle for the business domain (e.g., "E-commerce Churn Prediction").
+* Problem Statement: A clear, concise paragraph explaining the challenge.
+* My Methodology: A bulleted list or a few short paragraphs detailing the steps taken (e.g., Data Cleaning, Feature Engineering, Model Selection, Performance Evaluation).
+* Tech Stack: A small row of icons for the specific technologies used in this project.
+* Outcome & Impact: A final paragraph explaining the results. Quantify the impact wherever possible (e.g., "Achieved a 92% accuracy, leading to a projected 15% reduction in customer churn.").
+* Buttons for "View Source Code" and "Live Demo".
+* An "X" icon to close the modal.
+
+6.  Contact Section:
+* Heading: Let's Connect.
+* A concise message: "I am actively seeking new opportunities and would be delighted to chat. Feel free to reach out via email or connect with me on social media."
+* Display your email address as a clickable link that opens the user's default email client.
+* Include large, minimalist icons for LinkedIn and GitHub, with the magnetic hover effect. Do NOT include a contact form, as they can look generic. A direct email link is more personal and professional.
+
+7.  Footer:
+* Minimalist and clean. It should contain © 2025 [Your Name] and a link back to the top of the page.
+
+IV. Code Quality & Final Instructions:
+
+Use CSS variables for the color palette and font families at the :root level for easy customization.
+
+Use a modern CSS methodology like BEM (Block__Element--Modifier) for class names to keep the CSS organized and scalable.
+
+Write modular and well-commented JavaScript. Separate functionalities (e.g., scrollAnimations.js, cursor.js) if possible.
+
+Ensure the final product is flawlessly responsive across all devices, with particular attention to mobile usability. All animations should be performance-optimized (using transform and opacity instead of properties that trigger layout shifts).
+
+Prioritize accessibility by using semantic HTML tags (<nav>, <main>, <section>, etc.) and ARIA attributes where necessary.
+
