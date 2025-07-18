@@ -85,6 +85,30 @@ const projectData = {
     }
 };
 
+// Enhanced smooth scroll function
+function smoothScrollTo(target, duration = 800) {
+    const start = window.pageYOffset;
+    const distance = target - start;
+    const startTime = performance.now();
+
+    function ease(t) {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+
+    function scroll(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        window.scrollTo(0, start + distance * ease(progress));
+        
+        if (progress < 1) {
+            requestAnimationFrame(scroll);
+        }
+    }
+
+    requestAnimationFrame(scroll);
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initCustomCursor();
@@ -95,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initScrollToTop();
     initIntersectionObserver();
+    initAdvancedAnimations();
 });
 
 // Custom Cursor Implementation
@@ -106,24 +131,31 @@ function initCustomCursor() {
     let followerX = 0;
     let followerY = 0;
 
-    // Track mouse movement
+    // Track mouse movement with throttling
+    let mouseMoveThrottled = false;
     document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
+        if (!mouseMoveThrottled) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            mouseMoveThrottled = true;
+            requestAnimationFrame(() => {
+                mouseMoveThrottled = false;
+            });
+        }
     });
 
-    // Animate cursor
+    // Animate cursor with smoother interpolation
     function animateCursor() {
         // Cursor position (immediate)
         cursorX = mouseX;
         cursorY = mouseY;
         
-        // Follower position (delayed)
-        followerX += (mouseX - followerX) * 0.1;
-        followerY += (mouseY - followerY) * 0.1;
+        // Follower position (delayed with smoother easing)
+        followerX += (mouseX - followerX) * 0.15;
+        followerY += (mouseY - followerY) * 0.15;
         
-        cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-        cursorFollower.style.transform = `translate(${followerX}px, ${followerY}px)`;
+        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+        cursorFollower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
         
         requestAnimationFrame(animateCursor);
     }
@@ -157,7 +189,7 @@ function initNavigation() {
         updateActiveNavLink();
     });
 
-    // Smooth scrolling for navigation links
+    // Enhanced smooth scrolling for navigation links
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -166,10 +198,9 @@ function initNavigation() {
             
             if (targetSection) {
                 const offsetTop = targetSection.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
+                
+                // Use custom smooth scroll for better browser compatibility
+                smoothScrollTo(offsetTop, 800);
             }
         });
     });
@@ -232,18 +263,31 @@ function initMagneticButtons() {
     const magneticElements = document.querySelectorAll('.magnetic-btn');
     
     magneticElements.forEach(element => {
+        let magneticTween = null;
+        
         element.addEventListener('mousemove', (e) => {
             const rect = element.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            const deltaX = (e.clientX - centerX) * 0.3;
-            const deltaY = (e.clientY - centerY) * 0.3;
+            const deltaX = (e.clientX - centerX) * 0.4;
+            const deltaY = (e.clientY - centerY) * 0.4;
             
-            element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            // Cancel any existing animation
+            if (magneticTween) {
+                cancelAnimationFrame(magneticTween);
+            }
+            
+            // Smooth magnetic effect
+            magneticTween = requestAnimationFrame(() => {
+                element.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(1.05)`;
+            });
         });
         
         element.addEventListener('mouseleave', () => {
-            element.style.transform = 'translate(0, 0)';
+            if (magneticTween) {
+                cancelAnimationFrame(magneticTween);
+            }
+            element.style.transform = 'translate3d(0, 0, 0) scale(1)';
         });
     });
 }
@@ -347,17 +391,14 @@ function initMobileMenu() {
     });
 }
 
-// Scroll to top functionality
+// Scroll to top functionality with smooth animation
 function initScrollToTop() {
     const backToTopBtn = document.querySelector('.back-to-top');
     
     if (backToTopBtn) {
         backToTopBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            smoothScrollTo(0, 600);
         });
     }
 }
@@ -430,7 +471,19 @@ document.addEventListener('DOMContentLoaded', () => {
     initProjectCardsAnimation();
 });
 
-// Performance optimizations
+// Performance optimizations with requestAnimationFrame
+let ticking = false;
+function optimizedScrollHandler() {
+    if (!ticking) {
+        requestAnimationFrame(() => {
+            updateActiveNavLink();
+            ticking = false;
+        });
+        ticking = true;
+    }
+}
+
+// Enhanced throttle function
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -444,12 +497,8 @@ function throttle(func, limit) {
     };
 }
 
-// Throttle scroll events for better performance
-const throttledScrollHandler = throttle(() => {
-    updateActiveNavLink();
-}, 100);
-
-window.addEventListener('scroll', throttledScrollHandler);
+// Use optimized scroll handler
+window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
 
 // Loading animation
 function showPageLoad() {
@@ -494,11 +543,44 @@ function initSmoothPageTransitions() {
 // Initialize smooth transitions
 document.addEventListener('DOMContentLoaded', initSmoothPageTransitions);
 
+// Advanced animations initialization
+function initAdvancedAnimations() {
+    // Stagger animation for hero strengths
+    const strengthItems = document.querySelectorAll('.strength-item');
+    strengthItems.forEach((item, index) => {
+        item.style.animationDelay = `${0.8 + index * 0.2}s`;
+    });
+    
+    // Enhanced parallax for gradient orbs
+    const gradientOrbs = document.querySelectorAll('.gradient-orb');
+    let rafId;
+    
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        gradientOrbs.forEach((orb, index) => {
+            const speed = 0.3 + (index * 0.1);
+            const yPos = rate * speed;
+            orb.style.transform = `translate3d(0, ${yPos}px, 0)`;
+        });
+    }
+    
+    window.addEventListener('scroll', () => {
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+        }
+        rafId = requestAnimationFrame(updateParallax);
+    });
+}
+
 // Advanced hover effects for project cards
 function initAdvancedHoverEffects() {
     const projectCards = document.querySelectorAll('.project-card');
     
     projectCards.forEach(card => {
+        let hoverTween = null;
+        
         card.addEventListener('mouseenter', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -510,15 +592,25 @@ function initAdvancedHoverEffects() {
             const deltaX = (x - centerX) / centerX;
             const deltaY = (y - centerY) / centerY;
             
-            card.style.transform = `
-                translateY(-12px) 
-                rotateX(${deltaY * 5}deg) 
-                rotateY(${deltaX * 5}deg)
-            `;
+            if (hoverTween) {
+                cancelAnimationFrame(hoverTween);
+            }
+            
+            hoverTween = requestAnimationFrame(() => {
+                card.style.transform = `
+                    translate3d(0, -16px, 0) 
+                    scale(1.02)
+                    rotateX(${deltaY * 3}deg) 
+                    rotateY(${deltaX * 3}deg)
+                `;
+            });
         });
         
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+            if (hoverTween) {
+                cancelAnimationFrame(hoverTween);
+            }
+            card.style.transform = 'translate3d(0, 0, 0) scale(1) rotateX(0) rotateY(0)';
         });
     });
 }

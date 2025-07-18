@@ -26,9 +26,10 @@
     --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.2);
     
     /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-medium: 0.3s ease;
-    --transition-slow: 0.6s ease;
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-medium: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-elastic: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* Reset and Base Styles */
@@ -41,6 +42,23 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+}
+
+/* Smooth scrolling for all browsers */
+@supports (scroll-behavior: smooth) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Enable hardware acceleration for better performance */
+* {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
 }
 
 body {
@@ -62,6 +80,7 @@ body {
     pointer-events: none;
     z-index: 10000;
     transition: transform var(--transition-fast);
+    will-change: transform;
 }
 
 .cursor-follower {
@@ -73,13 +92,18 @@ body {
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    transition: transform 0.4s ease, width var(--transition-fast), height var(--transition-fast);
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                width var(--transition-fast), 
+                height var(--transition-fast),
+                background var(--transition-fast);
+    will-change: transform, width, height;
 }
 
 .cursor-follower.hover {
     width: 60px;
     height: 60px;
-    background: rgba(0, 163, 255, 0.2);
+    background: rgba(0, 163, 255, 0.25);
+    border-color: var(--accent-hover);
 }
 
 /* Container */
@@ -288,11 +312,12 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
-    transition: transform var(--transition-medium);
+    transition: transform var(--transition-elastic);
+    will-change: transform;
 }
 
 .strength-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.05);
 }
 
 .strength-item i {
@@ -431,15 +456,17 @@ body {
     padding: 1.5rem 1rem;
     background: var(--primary-bg);
     border-radius: 15px;
-    transition: all var(--transition-medium);
+    transition: all var(--transition-elastic);
     filter: grayscale(1);
+    will-change: transform, filter, background-color;
 }
 
 .skill-item:hover {
     filter: grayscale(0);
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.05);
     background: var(--accent-color);
     color: var(--primary-bg);
+    box-shadow: 0 15px 40px rgba(0, 163, 255, 0.3);
 }
 
 .skill-item i {
@@ -476,13 +503,14 @@ body {
     border-radius: 20px;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    transition: all var(--transition-medium);
+    transition: all var(--transition-elastic);
     cursor: pointer;
+    will-change: transform;
 }
 
 .project-card:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 25px 60px rgba(0, 163, 255, 0.15);
+    transform: translateY(-16px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(0, 163, 255, 0.2);
     border-color: var(--accent-color);
 }
 
@@ -636,15 +664,16 @@ body {
     font-weight: 600;
     font-size: 0.95rem;
     border-radius: 50px;
-    transition: all var(--transition-medium);
+    transition: all var(--transition-elastic);
     border: 2px solid var(--accent-color);
+    will-change: transform;
 }
 
 .btn:hover {
     background: var(--accent-hover);
     border-color: var(--accent-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0, 163, 255, 0.3);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 163, 255, 0.4);
 }
 
 .btn-primary {
@@ -704,7 +733,8 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     z-index: 10001;
-    animation: modalSlideIn 0.4s ease;
+    animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform, opacity;
 }
 
 .modal-close {
@@ -815,7 +845,7 @@ body {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -825,10 +855,41 @@ body {
 
 @keyframes float {
     0%, 100% {
-        transform: translateY(0px);
+        transform: translateY(0px) scale(1);
     }
     50% {
-        transform: translateY(-20px);
+        transform: translateY(-30px) scale(1.05);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
@@ -846,14 +907,23 @@ body {
 /* Scroll Animations */
 .fade-in-up {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
 }
 
 .fade-in-up.visible {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Stagger animation delays for smoother reveals */
+.fade-in-up:nth-child(1) { transition-delay: 0.1s; }
+.fade-in-up:nth-child(2) { transition-delay: 0.2s; }
+.fade-in-up:nth-child(3) { transition-delay: 0.3s; }
+.fade-in-up:nth-child(4) { transition-delay: 0.4s; }
+.fade-in-up:nth-child(5) { transition-delay: 0.5s; }
+.fade-in-up:nth-child(6) { transition-delay: 0.6s; }
 
 /* Responsive Design */
 @media (max-width: 768px) {
