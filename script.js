@@ -1,668 +1,158 @@
-// Elite Portfolio JavaScript
-// Advanced interactions and animations
+document.addEventListener("DOMContentLoaded", () => {
 
-// DOM Elements
-const navbar = document.getElementById('navbar');
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-const navLinks = document.querySelectorAll('.nav-link');
-const sections = document.querySelectorAll('section');
+    // --- 1. DUAL-THEME LOGIC ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlEl = document.documentElement;
 
-const projectCards = document.querySelectorAll('.project-card');
-const modal = document.getElementById('projectModal');
-const modalClose = document.getElementById('modalClose');
-const modalOverlay = document.querySelector('.modal-overlay');
-const modalBody = document.getElementById('modalBody');
+    // Apply saved theme on load
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    htmlEl.setAttribute('data-theme', savedTheme);
 
-// Project data for modal content
-const projectData = {
-    1: {
-        title: "E-commerce Churn Prediction",
-        subtitle: "Machine Learning • E-commerce",
-        problem: "A major e-commerce platform was experiencing high customer churn rates, with 25% of customers not returning after their first purchase. The business needed to identify at-risk customers early to implement targeted retention strategies.",
-        methodology: [
-            "Analyzed 2+ million customer transactions and behavioral data",
-            "Applied feature engineering to extract 50+ predictive variables",
-            "Implemented ensemble methods combining XGBoost and Random Forest",
-            "Used SMOTE for handling class imbalance in the dataset",
-            "Deployed model with real-time scoring via REST API"
-        ],
-        techStack: [
-            { icon: "fab fa-python", name: "Python" },
-            { icon: "fas fa-brain", name: "Scikit-learn" },
-            { icon: "fas fa-chart-line", name: "Pandas" },
-            { icon: "fas fa-database", name: "PostgreSQL" },
-            { icon: "fab fa-aws", name: "AWS" }
-        ],
-        outcome: "Achieved 92% accuracy in predicting customer churn, leading to a projected 15% reduction in customer attrition. The model identified key behavioral patterns that informed targeted marketing campaigns, resulting in $2.3M in retained revenue.",
-        codeLink: "https://github.com/yourusername/ecommerce-churn-prediction",
-        demoLink: "https://churn-prediction-demo.herokuapp.com"
-    },
-    2: {
-        title: "Sales Performance Dashboard",
-        subtitle: "Business Intelligence • Real-time Analytics",
-        problem: "The sales team lacked real-time visibility into performance metrics across multiple regions and product lines. Manual reporting was taking 2+ days and decisions were based on outdated information.",
-        methodology: [
-            "Designed ETL pipeline to process 100K+ daily transactions",
-            "Built interactive dashboards with drill-down capabilities",
-            "Implemented automated alert system for anomaly detection",
-            "Created predictive models for sales forecasting",
-            "Integrated with CRM and ERP systems for unified data view"
-        ],
-        techStack: [
-            { icon: "fas fa-chart-bar", name: "Tableau" },
-            { icon: "fab fa-python", name: "Python" },
-            { icon: "fas fa-database", name: "SQL Server" },
-            { icon: "fas fa-cloud", name: "Azure" },
-            { icon: "fas fa-cogs", name: "Apache Airflow" }
-        ],
-        outcome: "Reduced reporting time from 2 days to real-time updates, enabling faster decision-making. Sales team efficiency increased by 35%, and the forecasting models improved accuracy by 28%, leading to better inventory management and revenue optimization.",
-        codeLink: "https://github.com/yourusername/sales-dashboard",
-        demoLink: "https://sales-dashboard-demo.herokuapp.com"
-    },
-    3: {
-        title: "Financial Market Analysis",
-        subtitle: "Time Series • Financial Analytics",
-        problem: "Investment firm needed sophisticated models to predict market trends and optimize portfolio allocation. Traditional technical analysis was insufficient for the volatile market conditions.",
-        methodology: [
-            "Collected and cleaned 5+ years of multi-asset financial data",
-            "Implemented LSTM neural networks for time series prediction",
-            "Applied advanced feature engineering including technical indicators",
-            "Used Monte Carlo simulations for risk assessment",
-            "Built automated trading signals with backtesting framework"
-        ],
-        techStack: [
-            { icon: "fab fa-python", name: "Python" },
-            { icon: "fas fa-network-wired", name: "TensorFlow" },
-            { icon: "fas fa-chart-line", name: "Pandas" },
-            { icon: "fas fa-chart-pie", name: "Power BI" },
-            { icon: "fas fa-database", name: "PostgreSQL" }
-        ],
-        outcome: "Developed models with 78% directional accuracy in predicting market movements. Portfolio optimization strategies resulted in 23% improvement in risk-adjusted returns, managing $50M+ in assets with reduced volatility.",
-        codeLink: "https://github.com/yourusername/financial-market-analysis",
-        demoLink: "https://market-analysis-demo.herokuapp.com"
-    }
-};
-
-// Enhanced smooth scroll function
-function smoothScrollTo(target, duration = 800) {
-    const start = window.pageYOffset;
-    const distance = target - start;
-    const startTime = performance.now();
-
-    function ease(t) {
-        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    }
-
-    function scroll(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        window.scrollTo(0, start + distance * ease(progress));
-        
-        if (progress < 1) {
-            requestAnimationFrame(scroll);
-        }
-    }
-
-    requestAnimationFrame(scroll);
-}
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initAnimatedBackground();
-    initNavigation();
-    initScrollAnimations();
-    initMagneticButtons();
-    initProjectModals();
-    initMobileMenu();
-    initScrollToTop();
-    initIntersectionObserver();
-    initAdvancedAnimations();
-});
-
-// Animated Background Effects
-function initAnimatedBackground() {
-    const shapes = document.querySelectorAll('.shape');
-    
-    // Add random starting positions for shapes
-    shapes.forEach((shape, index) => {
-        const randomDelay = Math.random() * 10;
-        const randomDuration = 20 + Math.random() * 20;
-        shape.style.animationDelay = `${randomDelay}s`;
-        shape.style.animationDuration = `${randomDuration}s`;
-    });
-}
-
-// Navigation functionality
-function initNavigation() {
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        
-        updateActiveNavLink();
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlEl.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        htmlEl.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
     });
 
-    // Enhanced smooth scrolling for navigation links
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80;
-                
-                // Use custom smooth scroll for better browser compatibility
-                smoothScrollTo(offsetTop, 800);
-            }
+    // --- 2. INTERACTIVE GRID BACKGROUND ---
+    const grid = document.querySelector('.background-grid');
+    if (grid) {
+        window.addEventListener('mousemove', e => {
+            // Use requestAnimationFrame for performance
+            requestAnimationFrame(() => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                grid.style.setProperty('--mouse-x', `${x}%`);
+                grid.style.setProperty('--mouse-y', `${y}%`);
+            });
         });
-    });
-}
+    }
 
-// Update active navigation link
-function updateActiveNavLink() {
-    let currentSection = '';
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop - 150;
-        const sectionHeight = section.clientHeight;
-        
-        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').substring(1) === currentSection) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// Scroll animations using Intersection Observer
-function initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('section, .skill-item, .project-card, .strength-item');
-    
-    animatedElements.forEach(element => {
-        element.classList.add('fade-in-up');
-    });
-}
-
-// Intersection Observer for scroll animations
-function initIntersectionObserver() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
+    // --- 3. RELIABLE SCROLL ANIMATIONS ---
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+                entry.target.classList.add('is-visible');
+            } else {
+                 entry.target.classList.remove('is-visible');
             }
         });
-    }, observerOptions);
+    }, {
+        threshold: 0.1
+    });
 
-    // Observe all sections and animated elements
-    const elementsToObserve = document.querySelectorAll('.fade-in-up');
-    elementsToObserve.forEach(element => {
+    animatedElements.forEach(element => {
         observer.observe(element);
     });
-}
 
-// Magnetic button effects
-function initMagneticButtons() {
-    const magneticElements = document.querySelectorAll('.magnetic-btn');
-    
-    magneticElements.forEach(element => {
-        let magneticTween = null;
-        
-        element.addEventListener('mousemove', (e) => {
-            const rect = element.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const deltaX = (e.clientX - centerX) * 0.4;
-            const deltaY = (e.clientY - centerY) * 0.4;
-            
-            // Cancel any existing animation
-            if (magneticTween) {
-                cancelAnimationFrame(magneticTween);
-            }
-            
-            // Smooth magnetic effect
-            magneticTween = requestAnimationFrame(() => {
-                element.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(1.05)`;
-            });
-        });
-        
-        element.addEventListener('mouseleave', () => {
-            if (magneticTween) {
-                cancelAnimationFrame(magneticTween);
-            }
-            element.style.transform = 'translate3d(0, 0, 0) scale(1)';
-        });
-    });
-}
-
-// Project modal functionality
-function initProjectModals() {
-    projectCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const projectId = card.getAttribute('data-project');
-            openProjectModal(projectId);
-        });
-    });
-
-    // Close modal events
-    modalClose.addEventListener('click', closeProjectModal);
-    modalOverlay.addEventListener('click', closeProjectModal);
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeProjectModal();
+    // --- 4. FLAWLESS NAVBAR LOGIC ---
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById('navbar');
+    window.addEventListener("scroll", () => {
+        if (lastScrollY < window.scrollY && window.scrollY > 100) {
+            navbar.classList.add("nav-hidden");
+        } else {
+            navbar.classList.remove("nav-hidden");
         }
-    });
-}
-
-// Open project modal
-function openProjectModal(projectId) {
-    const project = projectData[projectId];
-    if (!project) return;
-
-    // Generate modal content
-    const modalContent = `
-        <div class="modal-title">${project.title}</div>
-        <div class="modal-subtitle">${project.subtitle}</div>
-        
-        <div class="modal-section">
-            <h3>Problem Statement</h3>
-            <p>${project.problem}</p>
-        </div>
-        
-        <div class="modal-section">
-            <h3>My Methodology</h3>
-            <ul>
-                ${project.methodology.map(item => `<li>${item}</li>`).join('')}
-            </ul>
-        </div>
-        
-        <div class="modal-section">
-            <h3>Tech Stack</h3>
-            <div class="modal-tech-stack">
-                ${project.techStack.map(tech => `
-                    <div class="modal-tech-item">
-                        <i class="${tech.icon}"></i>
-                        <span>${tech.name}</span>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-        
-        <div class="modal-section">
-            <h3>Outcome & Impact</h3>
-            <p>${project.outcome}</p>
-        </div>
-        
-        <div class="modal-buttons">
-            <a href="${project.codeLink}" target="_blank" class="btn btn-outline">
-                <i class="fab fa-github"></i>
-                View Source Code
-            </a>
-            <a href="${project.demoLink}" target="_blank" class="btn btn-primary">
-                <i class="fas fa-external-link-alt"></i>
-                Live Demo
-            </a>
-        </div>
-    `;
-
-    modalBody.innerHTML = modalContent;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-// Close project modal
-function closeProjectModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-// Mobile menu functionality
-function initMobileMenu() {
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+        navbar.classList.toggle("nav-scrolled", window.scrollY > 50);
+        lastScrollY = window.scrollY;
     });
 
-    // Close mobile menu when clicking on a link
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-        });
-    });
-}
+    // --- 5. PERFECTED PROJECT MODAL ---
+    const modal = document.getElementById('projectModal');
+    const modalBody = document.getElementById('modalBody');
+    const modalClose = document.getElementById('modalClose');
+    const modalOverlay = document.querySelector('.modal-overlay');
 
-// Scroll to top functionality with smooth animation
-function initScrollToTop() {
-    const backToTopBtn = document.querySelector('.back-to-top');
-    
-    if (backToTopBtn) {
-        backToTopBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            smoothScrollTo(0, 600);
-        });
-    }
-}
-
-// Parallax effect for gradient orbs
-function initParallaxEffect() {
-    const gradientOrbs = document.querySelectorAll('.gradient-orb');
-    
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        
-        gradientOrbs.forEach((orb, index) => {
-            const speed = 0.5 + (index * 0.1);
-            const yPos = -(scrolled * speed);
-            orb.style.transform = `translateY(${yPos}px)`;
-        });
-    });
-}
-
-// Initialize parallax on load
-window.addEventListener('load', () => {
-    initParallaxEffect();
-});
-
-// Skill items animation stagger
-function initSkillItemsAnimation() {
-    const skillItems = document.querySelectorAll('.skill-item');
-    
-    const skillObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, index * 100);
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-    
-    skillItems.forEach(item => {
-        skillObserver.observe(item);
-    });
-}
-
-// Project cards animation stagger
-function initProjectCardsAnimation() {
-    const projectCards = document.querySelectorAll('.project-card');
-    
-    const projectObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, index * 200);
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-    
-    projectCards.forEach(card => {
-        projectObserver.observe(card);
-    });
-}
-
-// Initialize staggered animations
-document.addEventListener('DOMContentLoaded', () => {
-    initSkillItemsAnimation();
-    initProjectCardsAnimation();
-});
-
-// Performance optimizations with requestAnimationFrame
-let ticking = false;
-function optimizedScrollHandler() {
-    if (!ticking) {
-        requestAnimationFrame(() => {
-            updateActiveNavLink();
-            ticking = false;
-        });
-        ticking = true;
-    }
-}
-
-// Enhanced throttle function
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
+    const projectData = {
+        1: {
+            category: "Machine Learning",
+            title: "Customer Churn Analysis",
+            imageSrc: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=1200&q=80",
+            overview: "This project analyzes customer churn data to find key factors that contribute to customer attrition, as retaining customers is often more cost-effective than acquiring new ones. The analysis involves exploratory data analysis (EDA), evaluating feature importance, and creating visual insights.",
+            features: ["Visualizes the number of customers who have churned versus those who have not.", "Identifies the customer attributes that most influence churn.", "Ensures the data analysis is accurate and reliable.", "Uses Matplotlib & Seaborn to create insightful charts."],
+            tech: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+            githubLink: "https://github.com/VIGNESH54/Customer_Churn_Analysis",
+            SiteLink: "https://github.com/VIGNESH54/Fraud_Detection_Project"
+        },
+        2: {
+            category: "Business Intelligence",
+            title: "Superstore Sales Analysis",
+            imageSrc: "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=1200&q=80",
+            overview: "This project analyzes sales data from a Superstore Dataset to find meaningful business insights. The goal is to identify sales trends, top-selling products, and revenue patterns over time to help businesses optimize performance and sales strategies.",
+            features: ["Identifies the regions that generate the most revenue.", "Highlights the products that contribute most to sales.", "Analyzes sales growth and seasonal changes.", "Manages missing values to ensure the analysis is accurate.","Uses Matplotlib & Seaborn to create insightful charts."],
+            tech: ["Python", "pandas", "matplotlib & seaborn"],
+            githubLink: "https://github.com/VIGNESH54/Superstore_Sales_Analysis"
+        },
+        3: {
+            category: "Classification Model",
+            title: "Fraud Detection System",
+            imageSrc: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
+            overview: "This project addresses the critical problem of identifying and preventing fraudulent financial activities. It uses machine learning models to detect fraudulent transactions by analyzing transaction data and the key factors that contribute to fraud.",
+            features: ["Helps to understand the distribution of fraudulent activities.", "Identifies the key factors that influence the detection of fraud.", "A model trained to classify transactions as either fraudulent or non-fraudulent.", "Uses Matplotlib & Seaborn to generate insightful charts."],
+            tech: ["Python", "pandas", "scikit-learn", "matplotlib & seaborn"],
+            githubLink: "https://github.com/VIGNESH54/Fraud_Detection_Project",
+            SiteLink: "https://github.com/VIGNESH54/Fraud_Detection_Project"
+        },
+        4: {
+            category: "New Project",
+            title: "Cooking Project",
+            imageSrc: "https://images.unsplash.com/photo-1495195129352-a2324e6216d1?auto=format&fit=crop&w=1200&q=80",
+            overview: "This is a placeholder for your new 'cooking' project. You can update this overview with a description of the project goals, challenges, and outcomes.",
+            features: ["Describe a key feature or accomplishment here.", "Showcase another interesting part of the project.", "Highlight a specific technique or tool you used."],
+            tech: ["Python", "Recipe API", "Data Scraping"],
+            githubLink: "#"
         }
     };
-}
 
-// Use optimized scroll handler
-window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+    function openModal(projectId) {
+        const project = projectData[projectId];
+        if (!project) return;
+        
+        modalBody.innerHTML = `
+            <img src="${project.imageSrc}" alt="${project.title}" class="project-image">
+            <div class="modal-header">
+                <span class="project-category">${project.category}</span>
+                <h3>${project.title}</h3>
+            </div>
+            <div class="modal-buttons">
+                <a href="${project.githubLink}" target="_blank" class="btn btn-secondary"><i class="fa-brands fa-github"></i> View on GitHub</a>
+                <a href="${project.SiteLink}" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-eye"></i> View Live project</a>
+            </div>
+            <h4>Project Overview</h4>
+            <p>${project.overview}</p>
+            <h4>Key Features</h4>
+            <ul>${project.features.map(item => `<li>${item}</li>`).join('')}</ul>
+            <h4>Tech Stack</h4>
+            <div class="tech-stack-tags skill-tags">
+                ${project.tech.map(item => `<span>${item}</span>`).join('')}
+            </div>
+        `;
 
-// Loading animation
-function showPageLoad() {
-    const fadeElements = document.querySelectorAll('.fade-in-up');
-    
-    fadeElements.forEach((element, index) => {
-        setTimeout(() => {
-            element.classList.add('visible');
-        }, index * 100);
+        document.body.style.overflow = 'hidden';
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('click', () => {
+            openModal(card.dataset.project);
+        });
     });
-}
 
-// Page load handler
-window.addEventListener('load', () => {
-    showPageLoad();
-    
-    // Remove loading class from body if it exists
-    document.body.classList.remove('loading');
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    console.log("Portfolio Dual-Theme Edition loaded. All systems stable and fantastic.");
 });
-
-// Smooth page transitions
-function initSmoothPageTransitions() {
-    const links = document.querySelectorAll('a[href^="#"]');
-    
-    links.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                const offsetTop = targetElement.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
-
-// Initialize smooth transitions
-document.addEventListener('DOMContentLoaded', initSmoothPageTransitions);
-
-// Advanced animations initialization
-function initAdvancedAnimations() {
-    // Stagger animation for hero strengths
-    const strengthItems = document.querySelectorAll('.strength-item');
-    strengthItems.forEach((item, index) => {
-        item.style.animationDelay = `${0.8 + index * 0.2}s`;
-    });
-    
-    // Enhanced parallax for gradient orbs
-    const gradientOrbs = document.querySelectorAll('.gradient-orb');
-    let rafId;
-    
-    function updateParallax() {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        
-        gradientOrbs.forEach((orb, index) => {
-            const speed = 0.3 + (index * 0.1);
-            const yPos = rate * speed;
-            orb.style.transform = `translate3d(0, ${yPos}px, 0)`;
-        });
-    }
-    
-    window.addEventListener('scroll', () => {
-        if (rafId) {
-            cancelAnimationFrame(rafId);
-        }
-        rafId = requestAnimationFrame(updateParallax);
-    });
-}
-
-// Advanced hover effects for project cards
-function initAdvancedHoverEffects() {
-    const projectCards = document.querySelectorAll('.project-card');
-    
-    projectCards.forEach(card => {
-        let hoverTween = null;
-        
-        card.addEventListener('mouseenter', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const deltaX = (x - centerX) / centerX;
-            const deltaY = (y - centerY) / centerY;
-            
-            if (hoverTween) {
-                cancelAnimationFrame(hoverTween);
-            }
-            
-            hoverTween = requestAnimationFrame(() => {
-                card.style.transform = `
-                    translate3d(0, -16px, 0) 
-                    scale(1.02)
-                    rotateX(${deltaY * 3}deg) 
-                    rotateY(${deltaX * 3}deg)
-                `;
-            });
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            if (hoverTween) {
-                cancelAnimationFrame(hoverTween);
-            }
-            card.style.transform = 'translate3d(0, 0, 0) scale(1) rotateX(0) rotateY(0)';
-        });
-    });
-}
-
-// Initialize advanced hover effects
-document.addEventListener('DOMContentLoaded', initAdvancedHoverEffects);
-
-// Accessibility improvements
-function initAccessibilityFeatures() {
-    // Skip link for keyboard users
-    const skipLink = document.createElement('a');
-    skipLink.href = '#main';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'skip-link';
-    skipLink.style.cssText = `
-        position: absolute;
-        top: -40px;
-        left: 6px;
-        background: var(--accent-color);
-        color: var(--primary-bg);
-        padding: 8px;
-        text-decoration: none;
-        border-radius: 4px;
-        z-index: 10000;
-        transition: top 0.3s;
-    `;
-    
-    skipLink.addEventListener('focus', () => {
-        skipLink.style.top = '6px';
-    });
-    
-    skipLink.addEventListener('blur', () => {
-        skipLink.style.top = '-40px';
-    });
-    
-    document.body.insertBefore(skipLink, document.body.firstChild);
-    
-    // Add proper focus management for modal
-    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    
-    modal.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-            const focusableContent = modal.querySelectorAll(focusableElements);
-            const firstFocusable = focusableContent[0];
-            const lastFocusable = focusableContent[focusableContent.length - 1];
-            
-            if (e.shiftKey) {
-                if (document.activeElement === firstFocusable) {
-                    lastFocusable.focus();
-                    e.preventDefault();
-                }
-            } else {
-                if (document.activeElement === lastFocusable) {
-                    firstFocusable.focus();
-                    e.preventDefault();
-                }
-            }
-        }
-    });
-}
-
-// Initialize accessibility features
-document.addEventListener('DOMContentLoaded', initAccessibilityFeatures);
-
-// Error handling and fallbacks
-function initErrorHandling() {
-    // Fallback for browsers without Intersection Observer
-    if (!window.IntersectionObserver) {
-        const fallbackElements = document.querySelectorAll('.fade-in-up');
-        fallbackElements.forEach(element => {
-            element.classList.add('visible');
-        });
-    }
-    
-    // Fallback for browsers without CSS Grid
-    if (!CSS.supports('display', 'grid')) {
-        const grids = document.querySelectorAll('.skills-grid, .projects-grid');
-        grids.forEach(grid => {
-            grid.style.display = 'flex';
-            grid.style.flexWrap = 'wrap';
-        });
-    }
-}
-
-// Initialize error handling
-document.addEventListener('DOMContentLoaded', initErrorHandling);
-
-// Console signature
-console.log(`
-%c Elite Portfolio Website
-%c Crafted with precision and attention to detail
-%c Built with vanilla JavaScript, CSS Grid, and modern web standards
-`, 
-'color: #00A3FF; font-size: 24px; font-weight: bold;',
-'color: #E0E0E0; font-size: 14px;',
-'color: #B0B0B0; font-size: 12px;'
-);
